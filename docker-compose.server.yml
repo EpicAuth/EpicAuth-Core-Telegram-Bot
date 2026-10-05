@@ -1,5 +1,5 @@
 services:
-  bot:
+  EpicAuth-Telegram-bot:
     image: ${IMAGE_REPO:-ghcr.io/epicauth/epicauth-core-telegram-bot}:${TAG:-latest}
     pull_policy: always
     restart: unless-stopped
