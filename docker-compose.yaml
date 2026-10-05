@@ -1,0 +1,27 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: epicauth-seller-bot:latest
+    container_name: epicauth-seller-bot
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 20s
+    environment:
+      TELEGRAM_API_KEY: ${TELEGRAM_API_KEY:?TELEGRAM_API_KEY is missing - set it in .env}
+      # Hardcoded on purpose - do NOT change this to ${DATABASE_URL}.
+      # The DATABASE_URL in .env is the relative path used when running locally
+      # with Bun. Compose injects this absolute path instead, so the bot and the
+      # prisma CLI both read the same file on the volume.
+      DATABASE_URL: file:/data/epicauth.db
+    volumes:
+      - bot-data:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  bot-data:

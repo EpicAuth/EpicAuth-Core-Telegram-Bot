@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Application {
+  id             String   @id @default(cuid())
+  telegramUserId String
+  sellerKey      String
+  name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([telegramUserId, sellerKey])
+  @@index([telegramUserId])
+}
+
+model ActiveApplication {
+  telegramUserId String   @id
+  sellerKey      String
+  updatedAt      DateTime @updatedAt
+}
+
+model LicenseMask {
+  telegramUserId String
+  sellerKey      String
+  mask           String
+  updatedAt      DateTime @updatedAt
+
+  @@id([telegramUserId, sellerKey])
+}
