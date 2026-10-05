@@ -28,21 +28,18 @@ export const execute: Execute = async (ctx) => {
           await step.reply("Send a valid seller key.");
           return;
         }
-        console.log("1")
-        const details = await ensure(step, await seller.setSeller(key));
 
-        if (!details) {
+        const res = await ensure(step, await seller.setSeller(key));
+
+        if (!res) {
           session.finish();
           return;
         }
-        console.log("2")
+        const details = await ensure(step, await seller.appDetails(key));
 
         session.set("sellerKey", key);
-        console.log("3")
 
-        await step.reply(`Valid key for "${details.name}". What should you call it locally?`);
-        console.log("4")
-
+        await step.reply(`Valid key for "${details?.appdetails.name}". What should you call it locally?`);
         session.next();
       },
       async (step, session) => {

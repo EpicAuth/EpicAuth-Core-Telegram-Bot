@@ -2,9 +2,10 @@ import axios from "axios";
 import config from "../config";
 import logger from "./logger";
 
-export type Result<T> = { ok: true; data: T } | { ok: false; message: string };
+export type Result<T> = { ok: true; message?: string, data: T } | { ok: false; message: string };
 
-export type AppDetails = { name: string; ownerid: string; secret: string; version: string };
+export type SetSeller = { message: string; };
+export type AppDetails = { appdetails: { name: string; ownerid: string; secret: string; version: string } };
 export type AppStats = {
   unused: number; used: number; paused: number; banned: number; totalkeys: number;
   webhooks: number; files: number; vars: number; resellers: number;
@@ -48,7 +49,7 @@ async function request<T>(
       return { ok: false, message: data?.message ?? "The seller API rejected the request." };
     }
 
-    return { ok: true, data: data as T };
+    return { ok: true, message: data.message, data: data as T };
   } catch (error) {
     logger.error(`Seller API call "${action}" failed: ${error}`);
     return { ok: false, message: "The seller API is unreachable. Please try again shortly." };
@@ -57,7 +58,7 @@ async function request<T>(
 
 export const seller = {
   appDetails: (key: string) => request<AppDetails>(key, "appdetails"),
-  setSeller: (key: string) => request<AppDetails>(key, "setseller"),
+  setSeller: (key: string) => request<SetSeller>(key, "setseller"),
   appSettings: (key: string) => request<Record<string, any>>(key, "getsettings"),
   appStats: (key: string) => request<AppStats>(key, "stats"),
   pauseApp: (key: string) => request<Empty>(key, "pauseapp"),
