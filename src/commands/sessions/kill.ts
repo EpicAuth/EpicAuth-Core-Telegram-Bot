@@ -16,13 +16,23 @@ export const execute: Execute = async (ctx, bot) => {
     type: "fetchallsessions",
   });
 
+
+  if (!sessions.success) {
+    const message = sessions.message || "No sessions found."
+    await ctx.api.editMessageText(
+      message.chat.id,
+      message.message_id,
+      `❌ ${message}`,
+    )
+    return
+  }
   const keyboard = new InlineKeyboard();
 
   for (let i = 0; i < sessions.sessions.length; i++) {
     const session = sessions.sessions[i];
 
     keyboard.text(`ID: ${session.id} (${session.credential || "Not logged in"})`, `session:del:${session.id}`);
-    
+
     if (i % 2 === 1 || i === sessions.sessions.length - 1) {
       keyboard.row();
     }
